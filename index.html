@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SNIPS by Shani | Book Appointment</title>
   <meta name="description" content="Book an appointment at SNIPS by Shani." />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
+  <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
 
   <style>
     :root {
@@ -291,7 +292,7 @@
       box-shadow: var(--shadow);
       overflow: hidden;
       padding: 28px;
-      max-width: 760px;
+      max-width: 860px;
       margin: 0 auto;
     }
 
@@ -307,6 +308,21 @@
       color: var(--muted);
       margin-bottom: 20px;
       line-height: 1.6;
+    }
+
+    .booking-app-box {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .booking-iframe {
+      width: 100%;
+      min-height: 720px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      background: #fff;
     }
 
     form {
@@ -527,55 +543,21 @@
     </section>
 
     <section id="book" class="section">
-      <section class="booking-card" aria-label="Appointment booking form">
+      <section class="booking-card" aria-label="Appointment booking">
         <h2 data-i18n="bookingTitle">Book Appointment</h2>
-        <p data-i18n="bookingCopy">Pick your date and time slot. A PDF receipt downloads first, then WhatsApp opens.</p>
+        <p data-i18n="bookingCopy">Use the official booking calendar below. It adds bookings to your calendar and prevents double booking automatically.</p>
 
-        <form onsubmit="handleBooking(event)">
-          <div class="row">
-            <label>
-              <span data-i18n="nameLabel">Name</span>
-              <input type="text" name="name" data-placeholder-en="Your full name" data-placeholder-ur="آپ کا نام" placeholder="Your full name" required />
-            </label>
-            <label>
-              <span data-i18n="phoneLabel">Phone</span>
-              <input type="tel" name="phone" data-placeholder-en="03XX XXXXXXX" data-placeholder-ur="03XX XXXXXXX" placeholder="03XX XXXXXXX" required />
-            </label>
-          </div>
+        <div class="booking-app-box">
+          <div id="google-calendar-button"></div>
+          <p class="form-note" data-i18n="bookingAppNote">Use the button or calendar below to book your appointment.</p>
+        </div>
 
-          <label>
-            <span data-i18n="serviceLabel">Service</span>
-            <select name="service" required>
-              <option value="" data-i18n="chooseService">Choose service</option>
-              <option data-i18n="haircuts">Haircut</option>
-              <option data-i18n="styling">Styling</option>
-              <option data-i18n="beard">Beard Trim</option>
-              <option data-i18n="color">Color</option>
-              <option data-i18n="treatments">Treatments</option>
-            </select>
-          </label>
-
-          <div class="row">
-            <label>
-              <span data-i18n="dateLabel">Pick Date</span>
-              <input type="date" name="date" id="dateInput" required />
-            </label>
-            <label>
-              <span data-i18n="timeLabel">Pick Time</span>
-              <select name="time" id="timeSlot" required>
-                <option value="" data-i18n="chooseTime">Choose time slot</option>
-              </select>
-            </label>
-          </div>
-
-          <label>
-            <span data-i18n="notesLabel">Notes</span>
-            <textarea name="notes" data-placeholder-en="Preferred style, fade level, beard detail, or special request." data-placeholder-ur="اپنا پسندیدہ اسٹائل، فیڈ لیول یا خاص درخواست لکھیں۔" placeholder="Preferred style, fade level, beard detail, or special request."></textarea>
-          </label>
-
-          <button class="btn btn-primary" type="submit" data-i18n="sendRequest">Download PDF & Send on WhatsApp</button>
-          <p class="form-note" data-i18n="formNote">Booking PDF downloads first. WhatsApp opens at 0347 5225883 after that.</p>
-        </form>
+        <iframe
+          class="booking-iframe"
+          src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2dEyoIqDxq2LvouLXSWq_sevME2PA6seH2Dp7g7UgKu2qNQHIpvM5ccFg-S2qAqpmqqP4f-hLH?gv=true"
+          title="SNIPS by Shani booking calendar"
+          loading="lazy">
+        </iframe>
       </section>
     </section>
   </main>
@@ -611,7 +593,9 @@
         priceBeard: "From Rs. 1,000",
         priceTreatments: "From Rs. 2,000",
         bookingTitle: "Book Appointment",
-        bookingCopy: "Pick your date and time slot. A PDF receipt downloads first, then WhatsApp opens.",
+        bookingCopy: "Use the official booking calendar below. It adds bookings to your calendar and prevents double booking automatically.",
+        openBooking: "Open Booking Calendar",
+        bookingAppNote: "Replace YOUR_GOOGLE_CALENDAR_BOOKING_LINK_HERE with your Google Calendar appointment schedule link.",
         nameLabel: "Name",
         phoneLabel: "Phone",
         serviceLabel: "Service",
@@ -648,7 +632,9 @@
         priceBeard: "Rs. 1,000 سے شروع",
         priceTreatments: "Rs. 2,000 سے شروع",
         bookingTitle: "اپائنٹمنٹ بک کریں",
-        bookingCopy: "تاریخ اور ٹائم سلاٹ چنیں۔ پہلے PDF ڈاؤن لوڈ ہوگی، پھر واٹس ایپ کھلے گا۔",
+        bookingCopy: "نیچے آفیشل بکنگ کیلنڈر استعمال کریں۔ یہ بکنگ آپ کے کیلنڈر میں شامل کرے گا اور ڈبل بکنگ روکے گا۔",
+        openBooking: "بکنگ کیلنڈر کھولیں",
+        bookingAppNote: "اپائنٹمنٹ بک کرنے کے لیے نیچے دیا گیا بٹن یا کیلنڈر استعمال کریں۔
         nameLabel: "نام",
         phoneLabel: "فون",
         serviceLabel: "سروس",
@@ -664,6 +650,17 @@
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    window.addEventListener("load", function() {
+      if (window.calendar && calendar.schedulingButton) {
+        calendar.schedulingButton.load({
+          url: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2dEyoIqDxq2LvouLXSWq_sevME2PA6seH2Dp7g7UgKu2qNQHIpvM5ccFg-S2qAqpmqqP4f-hLH?gv=true",
+          color: "#d7a93f",
+          label: "Book an appointment",
+          target: document.getElementById("google-calendar-button")
+        });
+      }
+    });
 
     const dateInput = document.getElementById("dateInput");
     const today = new Date();
@@ -719,7 +716,111 @@
       button.addEventListener("click", () => setLanguage(button.getAttribute("data-lang")));
     });
 
-    function createBookingPDF(details) {
+    function loadImageAsDataUrl(src) {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = image.naturalWidth;
+          canvas.height = image.naturalHeight;
+          const context = canvas.getContext("2d");
+          context.drawImage(image, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        image.onerror = () => resolve(null);
+        image.src = src;
+      });
+    }
+
+    function getAppointmentKey(details) {
+      return `${details.date}|${details.time}|${details.phone}`.toLowerCase().trim();
+    }
+
+    function appointmentExists(details) {
+      const appointments = JSON.parse(localStorage.getItem("snipsAppointments") || "[]");
+      return appointments.some((appointment) => appointment.key === getAppointmentKey(details));
+    }
+
+    function saveAppointment(details) {
+      const appointments = JSON.parse(localStorage.getItem("snipsAppointments") || "[]");
+      appointments.push({
+        key: getAppointmentKey(details),
+        name: details.name,
+        phone: details.phone,
+        service: details.service,
+        date: details.date,
+        time: details.time,
+        notes: details.notes,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("snipsAppointments", JSON.stringify(appointments));
+    }
+
+    function parseAppointmentDate(date, time) {
+      const dateParts = date.split("-").map(Number);
+      const timeParts = time.split(" ");
+      const clockParts = timeParts[0].split(":").map(Number);
+      let hour = clockParts[0];
+      const minute = clockParts[1];
+      const period = timeParts[1];
+
+      if (period === "PM" && hour !== 12) hour += 12;
+      if (period === "AM" && hour === 12) hour = 0;
+
+      const start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hour, minute, 0);
+      const end = new Date(start.getTime() + 30 * 60 * 1000);
+      return { start, end };
+    }
+
+    function toICSDate(date) {
+      return date.toISOString().replaceAll("-", "").replaceAll(":", "").split(".")[0] + "Z";
+    }
+
+    function safeFileName(value) {
+      return String(value || "booking").toLowerCase().split("").map((char) => {
+        return "abcdefghijklmnopqrstuvwxyz0123456789".includes(char) ? char : "-";
+      }).join("").replaceAll("--", "-");
+    }
+
+    function downloadCalendarInvite(details) {
+      const dates = parseAppointmentDate(details.date, details.time);
+      const lineBreak = String.fromCharCode(13, 10);
+      const uid = `${safeFileName(getAppointmentKey(details))}@snips-by-shani`;
+      const description = [
+        `Customer: ${details.name}`,
+        `Phone: ${details.phone}`,
+        `Service: ${details.service}`,
+        `Notes: ${details.notes}`
+      ].join(String.fromCharCode(92) + "n");
+
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//SNIPS by Shani//Appointment Booking//EN",
+        "BEGIN:VEVENT",
+        `UID:${uid}`,
+        `DTSTAMP:${toICSDate(new Date())}`,
+        `DTSTART:${toICSDate(dates.start)}`,
+        `DTEND:${toICSDate(dates.end)}`,
+        `SUMMARY:SNIPS by Shani - ${details.service}`,
+        `DESCRIPTION:${description}`,
+        "LOCATION:SNIPS by Shani",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join(lineBreak);
+
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `snips-calendar-${safeFileName(details.date + "-" + details.time)}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    async function createBookingPDF(details) {
       if (!window.jspdf || !window.jspdf.jsPDF) {
         alert("PDF library did not load. Your WhatsApp booking will still open.");
         return;
@@ -728,25 +829,26 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const createdAt = new Date().toLocaleString();
+      const logoData = await loadImageAsDataUrl("logo.png");
 
       doc.setFillColor(5, 5, 5);
       doc.rect(0, 0, 210, 297, "F");
 
+      if (logoData) {
+        doc.addImage(logoData, "PNG", 20, 14, 30, 30);
+      }
+
       doc.setTextColor(215, 169, 63);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(22);
-      doc.text("SNIPS by Shani", 20, 26);
+      doc.text("SNIPS by Shani", logoData ? 58 : 20, 25);
 
       doc.setTextColor(247, 243, 234);
       doc.setFontSize(16);
-      doc.text("Booking Information", 20, 42);
+      doc.text("Booking Information", logoData ? 58 : 20, 40);
 
       doc.setDrawColor(215, 169, 63);
-      doc.line(20, 48, 190, 48);
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.setTextColor(247, 243, 234);
+      doc.line(20, 52, 190, 52);
 
       const rows = [
         ["Name", details.name],
@@ -759,10 +861,11 @@
         ["WhatsApp", "0347 5225883"]
       ];
 
-      let y = 64;
+      let y = 68;
       rows.forEach(([label, value]) => {
         doc.setTextColor(215, 169, 63);
         doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
         doc.text(`${label}:`, 20, y);
 
         doc.setTextColor(247, 243, 234);
@@ -775,12 +878,10 @@
       doc.setTextColor(185, 177, 162);
       doc.setFontSize(10);
       doc.text("Please confirm your appointment through WhatsApp before visiting.", 20, 270);
-
-      const safeName = details.name.replace(/[^a-z0-9]/gi, "-").toLowerCase() || "booking";
-      doc.save(`snips-by-shani-${safeName}.pdf`);
+      doc.save(`snips-by-shani-${safeFileName(details.name)}.pdf`);
     }
 
-    function handleBooking(event) {
+    async function handleBooking(event) {
       event.preventDefault();
 
       const form = event.target;
@@ -794,7 +895,14 @@
         notes: data.get("notes") || "No notes"
       };
 
-      createBookingPDF(details);
+      if (appointmentExists(details)) {
+        alert("This appointment already exists. Please choose a different date, time, or phone number.");
+        return;
+      }
+
+      saveAppointment(details);
+      await createBookingPDF(details);
+      downloadCalendarInvite(details);
 
       const salonWhatsAppNumber = "923475225883";
       const message = `Hello SNIPS by Shani!%0A%0ANew appointment request:%0A%0AName: ${encodeURIComponent(details.name)}%0APhone: ${encodeURIComponent(details.phone)}%0AService: ${encodeURIComponent(details.service)}%0ADate: ${encodeURIComponent(details.date)}%0ATime: ${encodeURIComponent(details.time)}%0ANotes: ${encodeURIComponent(details.notes)}`;
@@ -802,7 +910,7 @@
 
       setTimeout(() => {
         window.location.href = whatsappUrl;
-      }, 500);
+      }, 700);
     }
   </script>
 </body>
