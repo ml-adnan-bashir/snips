@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNIPS by Shani | Book Appointment</title>
+  <meta name="description" content="Book an appointment at SNIPS by Shani." />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: #101010;
+      --gold: #d7a93f;
+      --gold-soft: #f1d177;
+      --text: #f7f3ea;
+      --muted: #b9b1a2;
+      --line: rgba(215, 169, 63, 0.28);
+      --radius: 22px;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.48);
+      --font-main: Inter, Arial, Helvetica, sans-serif;
+      --font-display: Georgia, "Times New Roman", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(215, 169, 63, 0.11), transparent 31%),
+        linear-gradient(180deg, #030303, #090909 48%, #050505);
+      color: var(--text);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+    }
+
+    body.urdu {
+      direction: rtl;
+      font-family: Arial, "Noto Nastaliq Urdu", "Noto Naskh Arabic", sans-serif;
+    }
+
+    body.urdu input,
+    body.urdu textarea,
+    body.urdu select {
+      direction: rtl;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .top-banner {
+      width: 100%;
+      background: #030303;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .top-banner img {
+      width: 100%;
+      height: clamp(210px, 28vw, 380px);
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .shell {
+      width: min(980px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(5, 5, 5, 0.88);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand-title {
+      font-size: 1.02rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .lang-switch {
+      display: flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .lang-switch button {
+      border: 0;
+      color: var(--muted);
+      background: transparent;
+      border-radius: 999px;
+      padding: 8px 11px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+
+    .lang-switch button.active {
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      color: #090909;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 13px 20px;
+      border: 1px solid var(--line);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(241, 209, 119, 0.75);
+    }
+
+    .btn-primary {
+      color: #090909;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      box-shadow: 0 12px 36px rgba(215, 169, 63, 0.2);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .hero {
+      padding: 38px 0 24px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 13px;
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.55rem, 6.4vw, 5.8rem);
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+      margin-bottom: 18px;
+    }
+
+    h1 span:last-child {
+      display: block;
+      color: var(--gold-soft);
+      font-style: italic;
+    }
+
+    .hero-copy {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 650px;
+      margin: 0 auto 22px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section {
+      padding: 30px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 22px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      max-width: 450px;
+      line-height: 1.65;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .service {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.02));
+      padding: 19px;
+      min-height: 150px;
+    }
+
+    .service h3 {
+      color: var(--gold-soft);
+      font-size: 1.04rem;
+      margin-bottom: 8px;
+    }
+
+    .service p {
+      color: var(--muted);
+      line-height: 1.58;
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    .service strong {
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .booking-card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 28px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .booking-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .booking-card > p {
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    form {
+      display: grid;
+      gap: 13px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--gold-soft);
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+
+    body.urdu label {
+      letter-spacing: 0;
+      font-size: 0.86rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      background: #070707;
+      color: var(--text);
+      padding: 14px 15px;
+      outline: none;
+      font: inherit;
+      color-scheme: dark;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(241, 209, 119, 0.8);
+      box-shadow: 0 0 0 4px rgba(215, 169, 63, 0.1);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    button.btn {
+      width: 100%;
+      border: 0;
+      font-size: 0.98rem;
+      min-height: 54px;
+    }
+
+    .form-note {
+      color: var(--muted);
+      font-size: 0.81rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      padding: 24px 0 34px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .services {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 20px, 980px);
+      }
+
+      .top-banner img {
+        height: clamp(185px, 60vw, 280px);
+      }
+
+      .nav-inner {
+        min-height: 66px;
+        gap: 10px;
+      }
+
+      .brand-title {
+        font-size: 0.86rem;
+        letter-spacing: 0.08em;
+      }
+
+      .nav-actions .btn {
+        display: none;
+      }
+
+      .lang-switch button {
+        padding: 7px 9px;
+        font-size: 0.74rem;
+      }
+
+      .hero {
+        padding-top: 26px;
+      }
+
+      .services,
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .service {
+        min-height: auto;
+      }
+
+      .booking-card {
+        padding: 20px;
+        border-radius: 22px;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 16px;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner" aria-label="SNIPS by Shani banner">
+    <img src="banner.png" alt="SNIPS by Shani banner" />
+  </div>
+
+  <header class="nav">
+    <div class="shell nav-inner">
+      <a href="#top" class="brand-title">SNIPS by Shani</a>
+
+      <div class="nav-actions">
+        <div class="lang-switch" aria-label="Language switcher">
+          <button type="button" class="active" data-lang="en">EN</button>
+          <button type="button" data-lang="ur">اردو</button>
+        </div>
+        <a href="#book" class="btn btn-primary" data-i18n="bookNow">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div class="eyebrow" data-i18n="eyebrow">Classy cuts. Sharp finish.</div>
+      <h1><span data-i18n="heroTitleA">Book your</span> <span data-i18n="heroTitleB">signature snip.</span></h1>
+      <p class="hero-copy" data-i18n="heroCopy">
+        Choose your service, pick a date, select a 30-minute time slot from 9:00 AM to 12:00 AM, download your booking PDF, and send your request on WhatsApp.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#book" class="btn btn-primary" data-i18n="reserve">Reserve Appointment</a>
+        <a href="#services" class="btn btn-secondary" data-i18n="viewServices">View Services</a>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="section-head">
+        <h2 class="section-title" data-i18n="servicesTitle">Services</h2>
+        <p data-i18n="servicesCopy">Clean service menu for fast booking. Update prices to match your final menu.</p>
+      </div>
+
+      <div class="services">
+        <article class="service">
+          <h3 data-i18n="haircuts">Haircuts</h3>
+          <p data-i18n="haircutsCopy">Modern cuts, clean shaping, and polished finishing.</p>
+          <strong data-i18n="priceHaircut">From Rs. 1,500</strong>
+        </article>
+
+        <article class="service">
+          <h3 data-i18n="styling">Styling</h3>
+          <p data-i18n="stylingCopy">Sharp finishing for daily looks or special occasions.</p>
+          <strong data-i18n="priceStyling">From Rs. 1,000</strong>
+        </article>
+
+        <article class="service">
+          <h3 data-i18n="beard">Beard Trim</h3>
+          <p data-i18n="beardCopy">Defined lines, balanced shape, and refined beard detail.</p>
+          <strong data-i18n="priceBeard">From Rs. 1,000</strong>
+        </article>
+
+        <article class="service">
+          <h3 data-i18n="treatments">Treatments</h3>
+          <p data-i18n="treatmentsCopy">Premium hair and beard care for a cleaner finish.</p>
+          <strong data-i18n="priceTreatments">From Rs. 2,000</strong>
+        </article>
+      </div>
+    </section>
+
+    <section id="book" class="section">
+      <section class="booking-card" aria-label="Appointment booking form">
+        <h2 data-i18n="bookingTitle">Book Appointment</h2>
+        <p data-i18n="bookingCopy">Pick your date and time slot. A PDF receipt downloads first, then WhatsApp opens.</p>
+
+        <form onsubmit="handleBooking(event)">
+          <div class="row">
+            <label>
+              <span data-i18n="nameLabel">Name</span>
+              <input type="text" name="name" data-placeholder-en="Your full name" data-placeholder-ur="آپ کا نام" placeholder="Your full name" required />
+            </label>
+            <label>
+              <span data-i18n="phoneLabel">Phone</span>
+              <input type="tel" name="phone" data-placeholder-en="03XX XXXXXXX" data-placeholder-ur="03XX XXXXXXX" placeholder="03XX XXXXXXX" required />
+            </label>
+          </div>
+
+          <label>
+            <span data-i18n="serviceLabel">Service</span>
+            <select name="service" required>
+              <option value="" data-i18n="chooseService">Choose service</option>
+              <option data-i18n="haircuts">Haircut</option>
+              <option data-i18n="styling">Styling</option>
+              <option data-i18n="beard">Beard Trim</option>
+              <option data-i18n="color">Color</option>
+              <option data-i18n="treatments">Treatments</option>
+            </select>
+          </label>
+
+          <div class="row">
+            <label>
+              <span data-i18n="dateLabel">Pick Date</span>
+              <input type="date" name="date" id="dateInput" required />
+            </label>
+            <label>
+              <span data-i18n="timeLabel">Pick Time</span>
+              <select name="time" id="timeSlot" required>
+                <option value="" data-i18n="chooseTime">Choose time slot</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            <span data-i18n="notesLabel">Notes</span>
+            <textarea name="notes" data-placeholder-en="Preferred style, fade level, beard detail, or special request." data-placeholder-ur="اپنا پسندیدہ اسٹائل، فیڈ لیول یا خاص درخواست لکھیں۔" placeholder="Preferred style, fade level, beard detail, or special request."></textarea>
+          </label>
+
+          <button class="btn btn-primary" type="submit" data-i18n="sendRequest">Download PDF & Send on WhatsApp</button>
+          <p class="form-note" data-i18n="formNote">Booking PDF downloads first. WhatsApp opens at 0347 5225883 after that.</p>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <footer id="contact" class="shell">
+    <span>© <span id="year"></span> SNIPS by Shani</span>
+    <span data-i18n="whatsappFooter">WhatsApp: 0347 5225883</span>
+  </footer>
+
+  <script>
+    const translations = {
+      en: {
+        bookNow: "Book Now",
+        eyebrow: "Classy cuts. Sharp finish.",
+        heroTitleA: "Book your",
+        heroTitleB: "signature snip.",
+        heroCopy: "Choose your service, pick a date, select a 30-minute time slot from 9:00 AM to 12:00 AM, download your booking PDF, and send your request on WhatsApp.",
+        reserve: "Reserve Appointment",
+        viewServices: "View Services",
+        servicesTitle: "Services",
+        servicesCopy: "Clean service menu for fast booking. Update prices to match your final menu.",
+        haircuts: "Haircuts",
+        haircutsCopy: "Modern cuts, clean shaping, and polished finishing.",
+        styling: "Styling",
+        stylingCopy: "Sharp finishing for daily looks or special occasions.",
+        beard: "Beard Trim",
+        beardCopy: "Defined lines, balanced shape, and refined beard detail.",
+        treatments: "Treatments",
+        treatmentsCopy: "Premium hair and beard care for a cleaner finish.",
+        color: "Color",
+        priceHaircut: "From Rs. 1,500",
+        priceStyling: "From Rs. 1,000",
+        priceBeard: "From Rs. 1,000",
+        priceTreatments: "From Rs. 2,000",
+        bookingTitle: "Book Appointment",
+        bookingCopy: "Pick your date and time slot. A PDF receipt downloads first, then WhatsApp opens.",
+        nameLabel: "Name",
+        phoneLabel: "Phone",
+        serviceLabel: "Service",
+        chooseService: "Choose service",
+        dateLabel: "Pick Date",
+        timeLabel: "Pick Time",
+        chooseTime: "Choose time slot",
+        notesLabel: "Notes",
+        sendRequest: "Download PDF & Send on WhatsApp",
+        formNote: "Booking PDF downloads first. WhatsApp opens at 0347 5225883 after that.",
+        whatsappFooter: "WhatsApp: 0347 5225883"
+      },
+      ur: {
+        bookNow: "ابھی بک کریں",
+        eyebrow: "کلاسک کٹ۔ شارپ فنش۔",
+        heroTitleA: "اپنی",
+        heroTitleB: "اپائنٹمنٹ بک کریں۔",
+        heroCopy: "سروس منتخب کریں، تاریخ چنیں، 9:00 AM سے 12:00 AM تک 30 منٹ کا ٹائم سلاٹ منتخب کریں، پہلے بکنگ PDF ڈاؤن لوڈ کریں، پھر واٹس ایپ پر درخواست بھیجیں۔",
+        reserve: "اپائنٹمنٹ بک کریں",
+        viewServices: "سروسز دیکھیں",
+        servicesTitle: "سروسز",
+        servicesCopy: "تیز بکنگ کے لیے صاف اور سادہ سروس مینو۔ قیمتیں اپنے فائنل مینو کے مطابق بدل دیں۔",
+        haircuts: "ہیئر کٹ",
+        haircutsCopy: "ماڈرن کٹ، صاف شیپنگ اور پالشڈ فنشنگ۔",
+        styling: "اسٹائلنگ",
+        stylingCopy: "روزمرہ یا خاص موقع کے لیے شارپ فنشنگ۔",
+        beard: "بیئرڈ ٹرم",
+        beardCopy: "صاف لائنز، متوازن شیپ اور بیئرڈ ڈیٹیل۔",
+        treatments: "ٹریٹمنٹس",
+        treatmentsCopy: "بالوں اور بیئرڈ کے لیے پریمیم کیئر۔",
+        color: "کلر",
+        priceHaircut: "Rs. 1,500 سے شروع",
+        priceStyling: "Rs. 1,000 سے شروع",
+        priceBeard: "Rs. 1,000 سے شروع",
+        priceTreatments: "Rs. 2,000 سے شروع",
+        bookingTitle: "اپائنٹمنٹ بک کریں",
+        bookingCopy: "تاریخ اور ٹائم سلاٹ چنیں۔ پہلے PDF ڈاؤن لوڈ ہوگی، پھر واٹس ایپ کھلے گا۔",
+        nameLabel: "نام",
+        phoneLabel: "فون",
+        serviceLabel: "سروس",
+        chooseService: "سروس منتخب کریں",
+        dateLabel: "تاریخ چنیں",
+        timeLabel: "وقت چنیں",
+        chooseTime: "ٹائم سلاٹ منتخب کریں",
+        notesLabel: "نوٹس",
+        sendRequest: "PDF ڈاؤن لوڈ کریں اور واٹس ایپ پر بھیجیں",
+        formNote: "بکنگ PDF پہلے ڈاؤن لوڈ ہوگی۔ اس کے بعد واٹس ایپ نمبر 0347 5225883 کھلے گا۔",
+        whatsappFooter: "واٹس ایپ: 0347 5225883"
+      }
+    };
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const dateInput = document.getElementById("dateInput");
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    dateInput.min = `${yyyy}-${mm}-${dd}`;
+
+    function formatSlot(hour, minute) {
+      const period = hour >= 12 ? "PM" : "AM";
+      const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+      const displayMinute = String(minute).padStart(2, "0");
+      return `${displayHour}:${displayMinute} ${period}`;
+    }
+
+    function buildTimeSlots() {
+      const select = document.getElementById("timeSlot");
+      for (let totalMinutes = 9 * 60; totalMinutes <= 24 * 60; totalMinutes += 30) {
+        const hour = Math.floor(totalMinutes / 60);
+        const minute = totalMinutes % 60;
+        const label = totalMinutes === 24 * 60 ? "12:00 AM" : formatSlot(hour, minute);
+        const option = document.createElement("option");
+        option.value = label;
+        option.textContent = label;
+        select.appendChild(option);
+      }
+    }
+
+    buildTimeSlots();
+
+    function setLanguage(lang) {
+      const dictionary = translations[lang];
+      document.documentElement.lang = lang === "ur" ? "ur" : "en";
+      document.body.classList.toggle("urdu", lang === "ur");
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.getAttribute("data-i18n");
+        if (dictionary[key]) {
+          element.textContent = dictionary[key];
+        }
+      });
+
+      document.querySelectorAll("[data-placeholder-en]").forEach((element) => {
+        element.placeholder = element.getAttribute(`data-placeholder-${lang}`) || element.getAttribute("data-placeholder-en");
+      });
+
+      document.querySelectorAll(".lang-switch button").forEach((button) => {
+        button.classList.toggle("active", button.getAttribute("data-lang") === lang);
+      });
+    }
+
+    document.querySelectorAll(".lang-switch button").forEach((button) => {
+      button.addEventListener("click", () => setLanguage(button.getAttribute("data-lang")));
+    });
+
+    function createBookingPDF(details) {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert("PDF library did not load. Your WhatsApp booking will still open.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const createdAt = new Date().toLocaleString();
+
+      doc.setFillColor(5, 5, 5);
+      doc.rect(0, 0, 210, 297, "F");
+
+      doc.setTextColor(215, 169, 63);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.text("SNIPS by Shani", 20, 26);
+
+      doc.setTextColor(247, 243, 234);
+      doc.setFontSize(16);
+      doc.text("Booking Information", 20, 42);
+
+      doc.setDrawColor(215, 169, 63);
+      doc.line(20, 48, 190, 48);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      doc.setTextColor(247, 243, 234);
+
+      const rows = [
+        ["Name", details.name],
+        ["Phone", details.phone],
+        ["Service", details.service],
+        ["Date", details.date],
+        ["Time", details.time],
+        ["Notes", details.notes],
+        ["Created", createdAt],
+        ["WhatsApp", "0347 5225883"]
+      ];
+
+      let y = 64;
+      rows.forEach(([label, value]) => {
+        doc.setTextColor(215, 169, 63);
+        doc.setFont("helvetica", "bold");
+        doc.text(`${label}:`, 20, y);
+
+        doc.setTextColor(247, 243, 234);
+        doc.setFont("helvetica", "normal");
+        const wrapped = doc.splitTextToSize(String(value || "-"), 118);
+        doc.text(wrapped, 62, y);
+        y += Math.max(11, wrapped.length * 7);
+      });
+
+      doc.setTextColor(185, 177, 162);
+      doc.setFontSize(10);
+      doc.text("Please confirm your appointment through WhatsApp before visiting.", 20, 270);
+
+      const safeName = details.name.replace(/[^a-z0-9]/gi, "-").toLowerCase() || "booking";
+      doc.save(`snips-by-shani-${safeName}.pdf`);
+    }
+
+    function handleBooking(event) {
+      event.preventDefault();
+
+      const form = event.target;
+      const data = new FormData(form);
+      const details = {
+        name: data.get("name"),
+        phone: data.get("phone"),
+        service: data.get("service"),
+        date: data.get("date"),
+        time: data.get("time"),
+        notes: data.get("notes") || "No notes"
+      };
+
+      createBookingPDF(details);
+
+      const salonWhatsAppNumber = "923475225883";
+      const message = `Hello SNIPS by Shani!%0A%0ANew appointment request:%0A%0AName: ${encodeURIComponent(details.name)}%0APhone: ${encodeURIComponent(details.phone)}%0AService: ${encodeURIComponent(details.service)}%0ADate: ${encodeURIComponent(details.date)}%0ATime: ${encodeURIComponent(details.time)}%0ANotes: ${encodeURIComponent(details.notes)}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${salonWhatsAppNumber}&text=${message}`;
+
+      setTimeout(() => {
+        window.location.href = whatsappUrl;
+      }, 500);
+    }
+  </script>
+</body>
+</html>
